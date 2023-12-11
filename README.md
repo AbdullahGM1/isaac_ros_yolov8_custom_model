@@ -3,7 +3,7 @@
 Introduction
 ======================
 
-This documentation expalins how to run Yolov8 acceleration on Jetson with `Intel Realsense D400` for a custom Yolov8 Model. 
+This documentation expalins how to run Yolov8 acceleration in Jetson with `Intel Realsense D400` for a custom Yolov8 Model. 
 
 Steps:
 ======================
@@ -106,4 +106,16 @@ def generate_launch_description():
   #  return launch.LaunchDescription([resize_launch_container])
 ```
 We need to make sure that the `enable_depth` is set to `true`, the `isaac_ros_yolov8` does not work smoothly if the camera is running without `Depth`. 
+
+8- Running `Yolov8` acceleration in `Jetson Orin Nx` may causes an issue, and shows `over current` issue, and throttle the hardware pefromance. In this case, we need to to create a custom power mode as shown [here](https://forums.developer.nvidia.com/t/system-throttled-due-to-over-current-on-orin-nx/247300/8?u=aalmusalami).
+ 
+9- Modify `yolov8_decoder_node.cpp` code inside  `/isaac_ros_yolov8/src`. The file contains the information of the model dimensions for the `.onnx` formate. To check the custom model dimensions, we can upload the model to this [website](https://netron.app/). Inside the code, we can see the following part:
+
+```
+  int num_classes = 2; 
+  int out_dim = 8400;
+
+```
+
+`num_classes` we change it to our models's classes, and `int out_dim` and select it to be the same as shown in custom model dimensions. 
 
