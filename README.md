@@ -129,7 +129,10 @@ Running the system:
 ```
 ros2 launch isaac_ros_yolov8 isaac_ros_yolov8_visualize.launch.py model_file_path:=/workspaces/isaac_ros-dev/src/onnx/drone_detection_v22_Yolov8n_int8.onnx engine_file_path:=/workspaces/isaac_ros-dev/src/onnx/drone_detection_v22_Yolov8n_int8.plan input_binding_names:=['images'] output_binding_names:=['output0'] network_image_width:=640 network_image_height:=640 force_engine_update:=False image_mean:=[0.0,0.0,0.0] image_stddev:=[1.0,1.0,1.0] input_image_width:=640 input_image_height:=640 confidence_threshold:=0.60 nms_threshold:=0.45
 ```
-We can change the parameters as shown [here](https://nvidia-isaac-ros.github.io/repositories_and_packages/isaac_ros_object_detection/isaac_ros_yolov8/index.html#ros-parameters). A window will show up. 
+We can change the parameters as shown [here](https://nvidia-isaac-ros.github.io/repositories_and_packages/isaac_ros_object_detection/isaac_ros_yolov8/index.html#ros-parameters). A window will show up to show the input image.
+
+* Note 1 - We need to change the name of the custom model.
+* Note 2 - Running the code for the first time, it firs will take time to run, wehere it will generate `.plan` formate for the custom model. After the file generates, we can use the same file again without generating `.plan` 
 
 2- Run the Realsense:
 ```
