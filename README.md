@@ -12,7 +12,8 @@ Steps:
 
 2- Clone the following packages:
 
-  ```git clone https://github.com/NVIDIA-ISAAC-ROS/isaac_ros_common.git```
-    
-```git clone https://github.com/NVIDIA-ISAAC-ROS/isaac_ros_object_detection.git```
+  ```
+git clone https://github.com/NVIDIA-ISAAC-ROS/isaac_ros_common.git && 
+git clone https://github.com/NVIDIA-ISAAC-ROS/isaac_ros_object_detection.git
+```
      
