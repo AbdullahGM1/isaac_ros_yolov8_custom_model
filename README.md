@@ -105,7 +105,7 @@ def generate_launch_description():
     return launch.LaunchDescription([realsense_camera_node, resize_launch_container])
   #  return launch.LaunchDescription([resize_launch_container])
 ```
-We need to make sure that the `enable_depth` is set to `true`, the `isaac_ros_yolov8` does not work smoothly if the camera is running without `Depth`. 
+We need to make sure that the `enable_depth` is set to `true`, the `isaac_ros_yolov8` does not work smoothly if the camera is running without `Depth`. We can modifiy the profile of the `rgb_camera.profile` and `depth_module.profile` to set with the sutable image size. 
 
 8- Running `Yolov8` acceleration in `Jetson Orin Nx` may causes an issue, and shows `over current` issue, and throttle the hardware pefromance. In this case, we need to to create a custom power mode as shown [here](https://forums.developer.nvidia.com/t/system-throttled-due-to-over-current-on-orin-nx/247300/8?u=aalmusalami).
  
@@ -117,5 +117,54 @@ We need to make sure that the `enable_depth` is set to `true`, the `isaac_ros_yo
 
 ```
 
-`num_classes` we change the number to the custom models's number of classes, and `int out_dim` and change the number to be the same as shown in custom model dimensions. 
+`num_classes` we change the number to the custom models's number of classes, and `int out_dim` and change the number to be the same as shown in custom model dimensions that we get from the website above.
+
+10- `colcon build` the packages.
+
+Running the system:
+======================
+
+1- We run first the `yolov8` acceleration"
+
+```
+ros2 launch isaac_ros_yolov8 isaac_ros_yolov8_visualize.launch.py model_file_path:=/workspaces/isaac_ros-dev/src/onnx/drone_detection_v22_Yolov8n_int8.onnx engine_file_path:=/workspaces/isaac_ros-dev/src/onnx/drone_detection_v22_Yolov8n_int8.plan input_binding_names:=['images'] output_binding_names:=['output0'] network_image_width:=640 network_image_height:=640 force_engine_update:=False image_mean:=[0.0,0.0,0.0] image_stddev:=[1.0,1.0,1.0] input_image_width:=640 input_image_height:=640 confidence_threshold:=0.60 nms_threshold:=0.45
+```
+We can change the parameters as shown [here](https://nvidia-isaac-ros.github.io/repositories_and_packages/isaac_ros_object_detection/isaac_ros_yolov8/index.html#ros-parameters). A window will show up. 
+
+2- Run the Realsense:
+```
+ros2 launch isaac_ros_yolov8 realsense.launch.py
+```
+We can see the camera's output with detection shows up in the window. 
+
+Running the system with Rviz2:
+======================
+
+
+1- Modify `isaac_ros_yolov8_visualize.launch.py` launch file in `/isaac_ros_yolov8/launch` by commenting or deleting the following lines"
+```
+       Node(
+            package='rqt_image_view',
+            executable='rqt_image_view',
+            name='image_view',
+            arguments=['/yolov8_processed_image']
+        )
+```
+
+2- `colcon build` the packages.
+
+3- We run first the `yolov8` acceleration"
+
+```
+ros2 launch isaac_ros_yolov8 isaac_ros_yolov8_visualize.launch.py model_file_path:=/workspaces/isaac_ros-dev/src/onnx/drone_detection_v22_Yolov8n_int8.onnx engine_file_path:=/workspaces/isaac_ros-dev/src/onnx/drone_detection_v22_Yolov8n_int8.plan input_binding_names:=['images'] output_binding_names:=['output0'] network_image_width:=640 network_image_height:=640 force_engine_update:=False image_mean:=[0.0,0.0,0.0] image_stddev:=[1.0,1.0,1.0] input_image_width:=640 input_image_height:=640 confidence_threshold:=0.60 nms_threshold:=0.45
+```
+
+4- Run the Realsense:
+```
+ros2 launch isaac_ros_yolov8 realsense.launch.py
+```
+
+5- Run `rviz2` and subscribe to `/yolov8_processed_image` to see the detection image.
+
+
 
