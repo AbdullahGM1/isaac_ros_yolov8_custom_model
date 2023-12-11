@@ -117,5 +117,5 @@ We need to make sure that the `enable_depth` is set to `true`, the `isaac_ros_yo
 
 ```
 
-`num_classes` we change it to our models's classes, and `int out_dim` and select it to be the same as shown in custom model dimensions. 
+`num_classes` we change the number to the custom models's number of classes, and `int out_dim` and change the number to be the same as shown in custom model dimensions. 
 
