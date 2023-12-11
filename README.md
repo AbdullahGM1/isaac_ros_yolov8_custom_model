@@ -30,4 +30,6 @@ cd ${ISAAC_ROS_WS}/src/isaac_ros_common && \
 sudo apt-get install -y ros-humble-isaac-ros-yolov8
 ```
 
-5- 
+5- Create a folder inside `src` folder, and let's name it `models` to add the custom models inside it. The Yolov8 model has to be in `onnx` formate. You can follow the procedures [here](https://docs.ultralytics.com/modes/export/#key-features-of-export-mode) to export the model from `.pt` to `.onnx`.
+
+
