@@ -3,7 +3,7 @@
 Introduction
 ======================
 
-This documentation expalins how to run Yolov8 on Jetson with acceleration for a custom Yolov8 Model. 
+This documentation expalins how to run Yolov8 acceleration on Jetson with `Intel Realsense D400` for a custom Yolov8 Model. 
 
 Steps:
 ======================
@@ -43,23 +43,6 @@ sudo apt-get install -y ros-humble-isaac-ros-yolov8
 7- `isaac_ros_yolov8` system accept only images input of size `640x640` and the input topic name `/image`. So, we need to resize the input image from the `realsence`, and rename the color image input for the camera from `/camera/color/image_raw` to `/image`. To do so, we can create a lunch file inside `/isaac_ros_yolov8/launch`, to run the the `Realsence` camera and rename the input topic and resise the image. We can name the launc file `realsense.launch.py`. We paste the below launch code to the created launch file.
 
 ```
-# SPDX-FileCopyrightText: NVIDIA CORPORATION & AFFILIATES
-# Copyright (c) 2021-2023 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-# http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-#
-# SPDX-License-Identifier: Apache-2.0
-
 import launch
 from launch_ros.actions import ComposableNodeContainer, Node
 from launch_ros.descriptions import ComposableNode
@@ -122,5 +105,5 @@ def generate_launch_description():
     return launch.LaunchDescription([realsense_camera_node, resize_launch_container])
   #  return launch.LaunchDescription([resize_launch_container])
 ```
-
+We need to make sure that the `enable_depth` is set to `true`, the `isaac_ros_yolov8` does not work smoothly if the camera is running without `Depth`. 
 
