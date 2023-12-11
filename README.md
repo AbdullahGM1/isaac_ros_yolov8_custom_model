@@ -40,9 +40,87 @@ sudo apt-get install -y ros-humble-isaac-ros-yolov8
 6- To use `isaac_ros_yolov8` with `Intel RealSense D400 cameras`, we need to install and colone the required packages to run the camera with `Ros2`. We can follow this documentation [here](https://github.com/IntelRealSense/realsense-ros).
 
 
-7- `isaac_ros_yolov8` system accept only images input of size `640x640` and the input topic name `/image`. So, we need to resize the input image from the `realsence`, and rename the color image input for the camera from `/camera/color/image_raw` to `/image`.
+7- `isaac_ros_yolov8` system accept only images input of size `640x640` and the input topic name `/image`. So, we need to resize the input image from the `realsence`, and rename the color image input for the camera from `/camera/color/image_raw` to `/image`. To do so, we can create a lunch file inside `/isaac_ros_yolov8/launch`, to run the the `Realsence` camera and rename the input topic and resise the image. We can name the launc file `realsense.launch.py`. We paste the below launch code to the created launch file.
+
+```
+# SPDX-FileCopyrightText: NVIDIA CORPORATION & AFFILIATES
+# Copyright (c) 2021-2023 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+# SPDX-License-Identifier: Apache-2.0
+
+import launch
+from launch_ros.actions import ComposableNodeContainer, Node
+from launch_ros.descriptions import ComposableNode
 
 
-To do so, we can create a lunch file inside `/isaac_ros_yolov8/launch`, to run the the `Realsence` camera and 
+def generate_launch_description():
+    """Launch file which brings up visual slam node configured for RealSense."""
+    realsense_camera_node = Node(
+        name='camera',
+        namespace='camera',
+        package='realsense2_camera',
+        executable='realsense2_camera_node',
+        parameters=[{
+               'enable_infra1': True,
+                'enable_infra2': True,
+                'enable_color': True,
+                'enable_depth': True,
+                'depth_module.emitter_enabled': 0,
+                'rgb_camera.profile': '640x480x60', 
+                'depth_module.profile': '640x480x90',
+                'enable_gyro': True,
+                'enable_accel': True,
+                'gyro_fps': 200,
+                'accel_fps': 200,
+                'unite_imu_method': 2
+        }],
+        remappings=[('color/image_raw', '/image')
+        ]
+    )
+    
+    image_resize_node_color = ComposableNode(
+        package='isaac_ros_image_proc',
+        plugin='nvidia::isaac_ros::image_proc::ResizeNode',
+        name='image_resize_right',
+        parameters=[{
+                'output_width': 640,
+                'output_height': 640,
+                'keep_aspect_ratio': True
+        }],
+        remappings=[
+            ('camera_info', '/camera/color/camera_info'),
+            ('image', '	'),
+            ('resize/camera_info', '/camera/color/camera_info_resize'),
+            ('resize/image', '/image')]
+    )
+    
+    resize_launch_container = ComposableNodeContainer(
+        name='resize_launch_container',
+        namespace='',
+        package='rclcpp_components',
+        executable='component_container',
+        composable_node_descriptions=[
+            image_resize_node_color
+        ],
+        output='screen'
+    )
+    
+    
+
+    return launch.LaunchDescription([realsense_camera_node, resize_launch_container])
+  #  return launch.LaunchDescription([resize_launch_container])
+```
 
 
