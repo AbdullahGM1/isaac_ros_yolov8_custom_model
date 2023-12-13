@@ -56,7 +56,8 @@ def generate_launch_description():
         package='realsense2_camera',
         executable='realsense2_camera_node',
         parameters=[{
-               'enable_infra1': True,
+                'align_depth.enable': True,
+                'enable_infra1': True,
                 'enable_infra2': True,
                 'enable_color': True,
                 'enable_depth': True,
